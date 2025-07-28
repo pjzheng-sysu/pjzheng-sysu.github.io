@@ -1,0 +1,50 @@
+# GitHub Actions 工作流：用于构建和部署 Next.js 网站到 GitHub Pages
+
+name: Deploy to GitHub Pages
+
+# 触发条件：当代码被推送到 master 分支时触发
+on:
+  push:
+    branches:
+      - master
+
+# 工作任务
+jobs:
+  build-and-deploy:
+    # 运行环境：使用最新的 Ubuntu 系统
+    runs-on: ubuntu-latest
+    steps:
+      # 第 1 步：检出你的仓库代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 第 2 步：设置 Node.js 环境
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 使用 Node.js 20.x 版本
+          cache: 'npm' # 缓存 npm 依赖，加快后续构建速度
+
+      # 第 3 步：安装项目依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 第 4 步：构建静态网站
+      # 这会执行 next build，并将结果输出到 ./out 目录
+      - name: Build static site
+        run: npm run build
+
+      # 第 5 步：创建一个 .nojekyll 文件
+      # 这可以防止 GitHub Pages 使用 Jekyll 处理你的网站，避免潜在的路径问题
+      - name: Add .nojekyll file
+        run: touch ./out/.nojekyll
+
+      # 第 6 步：部署到 gh-pages 分支
+      # 使用一个社区提供的 action 来简化部署过程
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # GitHub 会自动提供这个 token，用于授权 action 推送代码到你的仓库
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # 指定要部署的目录
+          publish_dir: ./out

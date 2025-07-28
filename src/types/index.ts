@@ -4,9 +4,9 @@ export interface SocialLink {
 }
 
 export interface Project {
-  title: string;
+  name: string;
   description: string;
-  link: string;
+  url: string;
 }
 
 
