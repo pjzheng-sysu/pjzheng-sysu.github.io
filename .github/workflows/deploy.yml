@@ -11,6 +11,8 @@ on:
 # 工作任务
 jobs:
   build-and-deploy:
+    permissions:
+      contents: write # 授予工作流写入仓库内容的权限
     # 运行环境：使用最新的 Ubuntu 系统
     runs-on: ubuntu-latest
     steps:
